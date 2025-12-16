@@ -9,8 +9,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, CreditCard, Truck } from 'lucide-react';
+import { ArrowLeft, CreditCard, Truck, MapPin, Phone, Package, CheckCircle2 } from 'lucide-react';
 
 const DELIVERY_CHARGE = 50;
 
@@ -86,105 +87,127 @@ const PlaceOrder = () => {
 
   return (
     <Layout>
-      <div className="container max-w-2xl py-8">
+      <div className="container max-w-4xl py-8">
         <Button 
           variant="ghost" 
           onClick={() => navigate(-1)} 
-          className="mb-6 gap-2"
+          className="mb-6 gap-2 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
         </Button>
 
-        <h1 className="font-display text-3xl font-bold mb-8">Place Order</h1>
+        <h1 className="font-display text-3xl font-bold mb-8 text-foreground">Place Your Order</h1>
 
-        <div className="grid gap-6">
-          {/* Order Summary */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Order Summary</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-4">
-                <img
-                  src={book.imageUrl || '/placeholder.svg'}
-                  alt={book.title}
-                  className="w-20 h-28 object-cover rounded"
-                />
-                <div className="flex-1">
-                  <h3 className="font-display font-semibold">{book.title}</h3>
-                  <p className="text-sm text-muted-foreground">by {book.author}</p>
-                  <p className="text-primary font-semibold mt-2">₹{book.price}</p>
-                </div>
-              </div>
-              <div className="border-t mt-4 pt-4 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Book Price</span>
-                  <span>₹{book.price}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Delivery Charge</span>
-                  <span>₹{DELIVERY_CHARGE}</span>
-                </div>
-                <div className="flex justify-between font-semibold text-lg pt-2 border-t">
-                  <span>Total</span>
-                  <span className="text-primary">₹{totalAmount}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Delivery Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Truck className="h-5 w-5" />
-                Delivery Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="address">Delivery Address</Label>
-                  <Textarea
-                    id="address"
-                    value={deliveryAddress}
-                    onChange={(e) => setDeliveryAddress(e.target.value)}
-                    placeholder="Enter your full delivery address..."
-                    rows={3}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 9876543210"
-                    required
-                  />
-                </div>
-
-                {/* Payment Method */}
-                <div className="bg-muted rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <CreditCard className="h-5 w-5 text-primary" />
-                    <span className="font-medium">Payment Method</span>
+        <div className="grid lg:grid-cols-5 gap-8">
+          {/* Order Form */}
+          <div className="lg:col-span-3">
+            <Card className="shadow-soft border-border/50">
+              <CardHeader>
+                <CardTitle className="font-display text-xl flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  Delivery Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="address" className="text-sm font-medium">Delivery Address</Label>
+                    <Textarea
+                      id="address"
+                      placeholder="Enter your full address including landmark, city, state and pincode"
+                      value={deliveryAddress}
+                      onChange={(e) => setDeliveryAddress(e.target.value)}
+                      rows={4}
+                      required
+                      className="resize-none"
+                    />
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    💵 <strong>Cash on Delivery</strong> - Pay ₹{totalAmount} when you receive your book
-                  </p>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="text-sm font-medium">Phone Number</Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="Your 10-digit mobile number"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* COD Notice */}
+                  <Card className="bg-primary/5 border-primary/20">
+                    <CardContent className="p-4 flex items-start gap-3">
+                      <CreditCard className="h-5 w-5 text-primary mt-0.5" />
+                      <div>
+                        <p className="font-medium text-foreground">Cash on Delivery</p>
+                        <p className="text-sm text-muted-foreground">
+                          You will pay ₹{totalAmount} in cash when the book is delivered to your address.
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Button type="submit" size="lg" className="w-full h-12 font-medium" disabled={isSubmitting}>
+                    {isSubmitting ? 'Placing Order...' : 'Confirm Order'}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Order Summary */}
+          <div className="lg:col-span-2">
+            <Card className="shadow-soft border-border/50 sticky top-24">
+              <CardHeader>
+                <CardTitle className="font-display text-xl flex items-center gap-2">
+                  <Package className="h-5 w-5 text-primary" />
+                  Order Summary
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex gap-4">
+                  <div className="w-20 h-28 rounded-lg overflow-hidden bg-secondary/50 flex-shrink-0">
+                    <img
+                      src={book.imageUrl || '/placeholder.svg'}
+                      alt={book.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-display font-semibold line-clamp-2 text-foreground">{book.title}</h3>
+                    <p className="text-sm text-muted-foreground">{book.author}</p>
+                    <Badge variant="secondary" className="mt-2 text-xs">{book.condition}</Badge>
+                  </div>
                 </div>
 
-                <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
-                  {isSubmitting ? 'Placing Order...' : `Confirm Order - ₹${totalAmount}`}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                <div className="border-t border-border pt-4 space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Book Price</span>
+                    <span className="text-foreground">₹{book.price}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Delivery Charge</span>
+                    <span className="text-foreground">₹{DELIVERY_CHARGE}</span>
+                  </div>
+                  <div className="flex justify-between font-semibold text-lg pt-2 border-t border-border">
+                    <span className="text-foreground">Total</span>
+                    <span className="text-primary">₹{totalAmount}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-success text-sm">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>Pay on delivery - No advance payment</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </Layout>
