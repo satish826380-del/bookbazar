@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { UserRole } from '@/types';
-import { BookOpen, ShoppingCart, Store } from 'lucide-react';
+import { BookOpen, ShoppingCart, Store, Mail, Lock, User } from 'lucide-react';
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -67,64 +67,74 @@ const Auth = () => {
 
   return (
     <Layout>
-      <div className="container max-w-md py-12">
-        <Card>
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4">
-              <BookOpen className="h-12 w-12 text-primary" />
+      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center py-12 px-4">
+        <Card className="w-full max-w-md shadow-soft animate-scale-in border-border/50">
+          <CardHeader className="text-center pb-2">
+            <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <BookOpen className="h-7 w-7 text-primary" />
             </div>
             <CardTitle className="font-display text-2xl">
               {isLogin ? 'Welcome Back' : 'Create Account'}
             </CardTitle>
-            <CardDescription>
-              {isLogin 
-                ? 'Sign in to continue to BookBazaar' 
-                : 'Join BookBazaar to buy or sell books'}
+            <CardDescription className="text-muted-foreground">
+              {isLogin ? 'Sign in to your account' : 'Join BookBazaar today'}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
                 <>
-                  <div className="space-y-2">
-                    <Label>I want to</Label>
-                    <RadioGroup value={role} onValueChange={(v) => setRole(v as UserRole)} className="grid grid-cols-2 gap-4">
-                      <div>
-                        <RadioGroupItem value="buyer" id="buyer" className="peer sr-only" />
-                        <Label
-                          htmlFor="buyer"
-                          className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
-                        >
-                          <ShoppingCart className="mb-2 h-6 w-6" />
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium">I want to</Label>
+                    <RadioGroup value={role} onValueChange={(v) => setRole(v as UserRole)} className="grid grid-cols-2 gap-3">
+                      <Label
+                        htmlFor="buyer"
+                        className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                          role === 'buyer' 
+                            ? 'border-primary bg-primary/5' 
+                            : 'border-border hover:border-primary/50'
+                        }`}
+                      >
+                        <RadioGroupItem value="buyer" id="buyer" className="sr-only" />
+                        <ShoppingCart className={`h-6 w-6 ${role === 'buyer' ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <span className={`text-sm font-medium ${role === 'buyer' ? 'text-primary' : 'text-foreground'}`}>
                           Buy Books
-                        </Label>
-                      </div>
-                      <div>
-                        <RadioGroupItem value="seller" id="seller" className="peer sr-only" />
-                        <Label
-                          htmlFor="seller"
-                          className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
-                        >
-                          <Store className="mb-2 h-6 w-6" />
+                        </span>
+                      </Label>
+                      <Label
+                        htmlFor="seller"
+                        className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                          role === 'seller' 
+                            ? 'border-primary bg-primary/5' 
+                            : 'border-border hover:border-primary/50'
+                        }`}
+                      >
+                        <RadioGroupItem value="seller" id="seller" className="sr-only" />
+                        <Store className={`h-6 w-6 ${role === 'seller' ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <span className={`text-sm font-medium ${role === 'seller' ? 'text-primary' : 'text-foreground'}`}>
                           Sell Books
-                        </Label>
-                      </div>
+                        </span>
+                      </Label>
                     </RadioGroup>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <Input
-                      id="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="John Doe"
-                      required
-                    />
+                    <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="John Doe"
+                        className="pl-10"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
+                    <Label htmlFor="phone" className="text-sm font-medium">Phone Number</Label>
                     <Input
                       id="phone"
                       type="tel"
@@ -137,64 +147,60 @@ const Auth = () => {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  required
-                />
+                <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="pl-10"
+                    required
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  minLength={6}
-                />
+                <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="pl-10"
+                    required
+                    minLength={6}
+                  />
+                </div>
               </div>
 
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
+              <Button type="submit" className="w-full h-11 font-medium" disabled={isSubmitting}>
                 {isSubmitting ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}
               </Button>
             </form>
 
-            <div className="mt-6 text-center text-sm">
-              {isLogin ? (
-                <p className="text-muted-foreground">
-                  Don't have an account?{' '}
-                  <button 
-                    onClick={() => setIsLogin(false)} 
-                    className="text-primary hover:underline"
-                  >
-                    Sign up
-                  </button>
-                </p>
-              ) : (
-                <p className="text-muted-foreground">
-                  Already have an account?{' '}
-                  <button 
-                    onClick={() => setIsLogin(true)} 
-                    className="text-primary hover:underline"
-                  >
-                    Sign in
-                  </button>
-                </p>
-              )}
+            <div className="mt-6 text-center">
+              <button
+                type="button"
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                {isLogin ? "Don't have an account? " : 'Already have an account? '}
+                <span className="font-medium text-primary">{isLogin ? 'Sign up' : 'Sign in'}</span>
+              </button>
             </div>
 
             {isLogin && (
-              <div className="mt-4 p-3 bg-muted rounded-lg text-sm text-muted-foreground">
-                <p className="font-medium">Demo Admin Login:</p>
-                <p>Email: admin@bookstore.com</p>
-                <p>Password: admin123</p>
+              <div className="mt-4 p-4 rounded-xl bg-secondary/50 border border-border">
+                <p className="text-xs text-muted-foreground text-center mb-2">Demo Admin Access</p>
+                <p className="text-xs text-center font-mono text-foreground">
+                  admin@bookstore.com / admin123
+                </p>
               </div>
             )}
           </CardContent>
