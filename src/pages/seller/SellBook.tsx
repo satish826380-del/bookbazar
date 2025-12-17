@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { useAuth } from '@/contexts/AuthContext';
@@ -6,13 +6,11 @@ import { useBooks } from '@/hooks/useBooks';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { BOOK_CATEGORIES, BOOK_CONDITIONS, BookCondition } from '@/types';
-import { ArrowLeft, Upload } from 'lucide-react';
-import { useEffect } from 'react';
+import { BOOK_CONDITIONS, BookCondition } from '@/types';
+import { ArrowLeft, Upload, X, IndianRupee } from 'lucide-react';
 
 const SellBook = () => {
   const navigate = useNavigate();
@@ -21,14 +19,29 @@ const SellBook = () => {
   const { toast } = useToast();
 
   const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [category, setCategory] = useState('');
-  const [price, setPrice] = useState('');
+  const [printedMRP, setPrintedMRP] = useState('');
   const [condition, setCondition] = useState<BookCondition | ''>('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [pickupAddress, setPickupAddress] = useState('');
-  const [phone, setPhone] = useState(user?.phone || '');
+  const [images, setImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Calculate suggested price based on condition and MRP
+  const getSuggestedPrice = (): number => {
+    if (!printedMRP || !condition) return 0;
+    const mrp = parseFloat(printedMRP);
+    if (isNaN(mrp)) return 0;
+    
+    const discountRates: Record<BookCondition, number> = {
+      'new': 0.70,
+      'like-new': 0.60,
+      'good': 0.50,
+      'fair': 0.40,
+      'poor': 0.30,
+    };
+    
+    return Math.round(mrp * discountRates[condition]);
+  };
+
+  const suggestedPrice = getSuggestedPrice();
 
   useEffect(() => {
     if (!user || user.role !== 'seller') {
@@ -38,11 +51,42 @@ const SellBook = () => {
 
   if (!user || user.role !== 'seller') return null;
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    if (images.length + files.length > 2) {
+      toast({ title: 'Maximum 2 images allowed', variant: 'destructive' });
+      return;
+    }
+
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setImages(prev => [...prev, event.target!.result as string]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    e.target.value = '';
+  };
+
+  const removeImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !author || !category || !price || !condition || !pickupAddress || !phone) {
+    if (!title || !printedMRP || !condition) {
       toast({ title: 'Please fill all required fields', variant: 'destructive' });
+      return;
+    }
+
+    if (images.length === 0) {
+      toast({ title: 'Please upload at least one image', variant: 'destructive' });
       return;
     }
 
@@ -53,13 +97,13 @@ const SellBook = () => {
         sellerId: user.id,
         sellerName: user.name,
         title,
-        author,
-        category,
-        price: parseFloat(price),
+        author: '',
+        category: 'Other',
+        price: suggestedPrice,
         condition,
-        imageUrl: imageUrl || '/placeholder.svg',
-        pickupAddress,
-        phone,
+        imageUrl: images[0],
+        pickupAddress: '',
+        phone: user.phone || '',
       });
 
       toast({ 
@@ -76,7 +120,7 @@ const SellBook = () => {
 
   return (
     <Layout>
-      <div className="container max-w-2xl py-8">
+      <div className="container max-w-lg py-8 px-4">
         <Button 
           variant="ghost" 
           onClick={() => navigate('/seller')} 
@@ -86,127 +130,113 @@ const SellBook = () => {
           Back to Dashboard
         </Button>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-display text-2xl">List Your Book</CardTitle>
+        <Card className="shadow-soft">
+          <CardHeader className="text-center">
+            <CardTitle className="font-display text-2xl">Sell Your Book</CardTitle>
             <CardDescription>
-              Fill in the details below. Your book will be visible after admin approval.
+              Fill in the details below to list your book
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Book Details */}
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Book Title *</Label>
+              {/* Book Title */}
+              <div className="space-y-2">
+                <Label htmlFor="title">Book Title *</Label>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter book title"
+                  className="h-12"
+                  required
+                />
+              </div>
+
+              {/* Printed MRP */}
+              <div className="space-y-2">
+                <Label htmlFor="mrp">Printed MRP (₹) *</Label>
+                <div className="relative">
+                  <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Enter book title"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="author">Author *</Label>
-                  <Input
-                    id="author"
-                    value={author}
-                    onChange={(e) => setAuthor(e.target.value)}
-                    placeholder="Enter author name"
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Category *</Label>
-                    <Select value={category} onValueChange={setCategory}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {BOOK_CATEGORIES.map(cat => (
-                          <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Condition *</Label>
-                    <Select value={condition} onValueChange={(v) => setCondition(v as BookCondition)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select condition" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {BOOK_CONDITIONS.map(cond => (
-                          <SelectItem key={cond.value} value={cond.value}>{cond.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="price">Price (₹) *</Label>
-                  <Input
-                    id="price"
+                    id="mrp"
                     type="number"
                     min="1"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    placeholder="Enter price in rupees"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="imageUrl">Book Image URL</Label>
-                  <Input
-                    id="imageUrl"
-                    type="url"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    placeholder="https://example.com/book-image.jpg"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Paste a URL to your book's image, or leave empty for placeholder
-                  </p>
-                </div>
-              </div>
-
-              {/* Pickup Details */}
-              <div className="border-t pt-6 space-y-4">
-                <h3 className="font-semibold">Pickup Details</h3>
-
-                <div className="space-y-2">
-                  <Label htmlFor="pickupAddress">Pickup Address *</Label>
-                  <Textarea
-                    id="pickupAddress"
-                    value={pickupAddress}
-                    onChange={(e) => setPickupAddress(e.target.value)}
-                    placeholder="Enter full address for book pickup"
-                    rows={3}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Contact Phone *</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 9876543210"
+                    value={printedMRP}
+                    onChange={(e) => setPrintedMRP(e.target.value)}
+                    placeholder="Enter printed MRP"
+                    className="h-12 pl-10"
                     required
                   />
                 </div>
               </div>
 
-              <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+              {/* Condition */}
+              <div className="space-y-2">
+                <Label>Book Condition *</Label>
+                <Select value={condition} onValueChange={(v) => setCondition(v as BookCondition)}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Select condition" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BOOK_CONDITIONS.map(cond => (
+                      <SelectItem key={cond.value} value={cond.value}>{cond.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Image Upload */}
+              <div className="space-y-2">
+                <Label>Book Images * (Max 2)</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  {images.map((img, index) => (
+                    <div key={index} className="relative aspect-[3/4] rounded-lg overflow-hidden border border-border bg-muted">
+                      <img src={img} alt={`Book ${index + 1}`} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90 transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                  {images.length < 2 && (
+                    <label className="aspect-[3/4] rounded-lg border-2 border-dashed border-border hover:border-primary/50 bg-muted/50 flex flex-col items-center justify-center cursor-pointer transition-colors">
+                      <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                      <span className="text-sm text-muted-foreground">Upload Image</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+                </div>
+              </div>
+
+              {/* Auto Suggested Price */}
+              <div className="space-y-2">
+                <Label>Suggested Price</Label>
+                <div className="h-12 px-4 rounded-lg bg-primary/10 border border-primary/20 flex items-center">
+                  <IndianRupee className="h-4 w-4 text-primary mr-1" />
+                  <span className="text-lg font-semibold text-primary">
+                    {suggestedPrice > 0 ? suggestedPrice : '—'}
+                  </span>
+                  <span className="ml-2 text-sm text-muted-foreground">(Auto-calculated)</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Price is calculated based on MRP and book condition
+                </p>
+              </div>
+
+              <Button 
+                type="submit" 
+                size="lg" 
+                className="w-full h-12 text-base font-semibold" 
+                disabled={isSubmitting || suggestedPrice === 0}
+              >
                 {isSubmitting ? 'Submitting...' : 'Submit for Approval'}
               </Button>
             </form>
