@@ -40,6 +40,13 @@ export const useBooks = () => {
     saveBooks(updated);
   };
 
+  const updateBookPrice = (bookId: string, price: number) => {
+    const updated = books.map(book => 
+      book.id === bookId ? { ...book, price } : book
+    );
+    saveBooks(updated);
+  };
+
   const getApprovedBooks = () => books.filter(b => b.status === 'approved');
   
   const getBooksBySeller = (sellerId: string) => books.filter(b => b.sellerId === sellerId);
@@ -53,6 +60,7 @@ export const useBooks = () => {
     isLoading,
     addBook,
     updateBookStatus,
+    updateBookPrice,
     getApprovedBooks,
     getBooksBySeller,
     getBookById,

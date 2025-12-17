@@ -13,8 +13,13 @@ import PlaceOrder from "./pages/PlaceOrder";
 import SellerDashboard from "./pages/seller/SellerDashboard";
 import SellBook from "./pages/seller/SellBook";
 import BuyerDashboard from "./pages/buyer/BuyerDashboard";
-import AdminDashboard from "./pages/admin/AdminDashboard";
 import NotFound from "./pages/NotFound";
+
+// Admin
+import AdminLayout from "./components/layout/AdminLayout";
+import AdminHome from "./pages/admin/AdminHome";
+import AdminBooks from "./pages/admin/AdminBooks";
+import AdminOrders from "./pages/admin/AdminOrders";
 
 const queryClient = new QueryClient();
 
@@ -33,7 +38,14 @@ const App = () => (
             <Route path="/seller" element={<SellerDashboard />} />
             <Route path="/seller/sell" element={<SellBook />} />
             <Route path="/buyer" element={<BuyerDashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
+            
+            {/* Admin Routes - Hidden, accessible only via direct URL */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminHome />} />
+              <Route path="books" element={<AdminBooks />} />
+              <Route path="orders" element={<AdminOrders />} />
+            </Route>
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
