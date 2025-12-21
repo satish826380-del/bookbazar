@@ -33,9 +33,13 @@ const AdminOrders = () => {
   const { orders, updateOrderStatus } = useOrders();
   const { toast } = useToast();
 
-  const handleStatusChange = (orderId: string, status: OrderStatus) => {
-    updateOrderStatus(orderId, status);
-    toast({ title: 'Order status updated' });
+  const handleStatusChange = async (orderId: string, status: OrderStatus) => {
+    try {
+      await updateOrderStatus(orderId, status);
+      toast({ title: 'Order status updated' });
+    } catch (error) {
+      toast({ title: 'Failed to update order', variant: 'destructive' });
+    }
   };
 
   return (

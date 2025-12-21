@@ -30,7 +30,7 @@ const Auth = () => {
   useEffect(() => {
     if (user) {
       const redirect = user.role === 'admin' ? '/admin' : 
-                       user.role === 'seller' ? '/seller' : '/buyer';
+                       user.role === 'seller' ? '/seller' : '/';
       navigate(redirect);
     }
   }, [user, navigate]);
@@ -41,11 +41,22 @@ const Auth = () => {
 
     try {
       if (isLogin) {
+        console.log('Attempting login with:', email);
         const result = await login(email, password);
+        console.log('Login result:', result);
         if (!result.success) {
-          toast({ title: 'Login failed', description: result.error, variant: 'destructive' });
+          const errorMsg = result.error || 'Unknown error occurred';
+          console.error('Login failed:', errorMsg);
+          toast({ 
+            title: 'Login failed', 
+            description: errorMsg, 
+            variant: 'destructive',
+            duration: 5000 
+          });
         } else {
+          console.log('Login successful, waiting for redirect...');
           toast({ title: 'Welcome back!' });
+          // Redirect will happen via useEffect when user state updates
         }
       } else {
         if (!name.trim()) {
@@ -53,13 +64,33 @@ const Auth = () => {
           setIsSubmitting(false);
           return;
         }
+        console.log('Attempting signup with:', { email, name, role });
         const result = await signup(email, password, name, role, phone);
+        console.log('Signup result:', result);
         if (!result.success) {
-          toast({ title: 'Signup failed', description: result.error, variant: 'destructive' });
+          const errorMsg = result.error || 'Unknown error occurred';
+          console.error('Signup failed:', errorMsg);
+          toast({ 
+            title: 'Signup failed', 
+            description: errorMsg, 
+            variant: 'destructive',
+            duration: 5000 
+          });
         } else {
+          console.log('Signup successful, waiting for redirect...');
           toast({ title: 'Account created successfully!' });
+          // Redirect will happen via useEffect when user state updates
+          // The onAuthStateChange listener should trigger loadUser which sets the user state
         }
       }
+    } catch (err) {
+      console.error('Unexpected error in handleSubmit:', err);
+      toast({ 
+        title: 'An error occurred', 
+        description: err instanceof Error ? err.message : 'Please check the console for details',
+        variant: 'destructive',
+        duration: 5000 
+      });
     } finally {
       setIsSubmitting(false);
     }

@@ -23,7 +23,7 @@ const AdminBooks = () => {
   const { getPendingBooks, updateBookStatus, updateBookPrice } = useBooks();
   const { toast } = useToast();
   const pendingBooks = getPendingBooks();
-  
+
   const [finalPrices, setFinalPrices] = useState<Record<string, string>>({});
 
   const getFinalPrice = (bookId: string, suggestedPrice: number): number => {
@@ -35,18 +35,28 @@ const AdminBooks = () => {
     setFinalPrices(prev => ({ ...prev, [bookId]: value }));
   };
 
-  const handleAction = (bookId: string, status: BookStatus, suggestedPrice: number) => {
+  const handleAction = async (bookId: string, status: BookStatus, suggestedPrice: number) => {
     if (status === 'approved') {
       const finalPrice = getFinalPrice(bookId, suggestedPrice);
       if (finalPrice <= 0) {
         toast({ title: 'Please set a valid final price', variant: 'destructive' });
         return;
       }
-      updateBookPrice(bookId, finalPrice);
+      try {
+        await updateBookPrice(bookId, finalPrice);
+      } catch (error) {
+        toast({ title: 'Failed to update price', variant: 'destructive' });
+        return;
+      }
     }
-    updateBookStatus(bookId, status);
-    toast({ title: `Book ${status === 'approved' ? 'approved' : 'rejected'}` });
-    
+    try {
+      await updateBookStatus(bookId, status);
+      toast({ title: `Book ${status === 'approved' ? 'approved' : 'rejected'}` });
+    } catch (error) {
+      toast({ title: 'Failed to update status', variant: 'destructive' });
+      return;
+    }
+
     // Clear the price input
     setFinalPrices(prev => {
       const next = { ...prev };
@@ -100,7 +110,20 @@ const AdminBooks = () => {
                           <span className="font-medium">{book.sellerName}</span>
                         </div>
                       </div>
-                      
+
+                      <div className="space-y-1 pt-1 border-t border-border/50">
+                        <div className="text-sm">
+                          <span className="text-muted-foreground">Pickup Address:</span>{' '}
+                          <span className="font-medium">{book.pickupAddress}</span>
+                        </div>
+                        {book.landmark && (
+                          <div className="text-sm">
+                            <span className="text-muted-foreground">Landmark:</span>{' '}
+                            <span className="font-medium">{book.landmark}</span>
+                          </div>
+                        )}
+                      </div>
+
                       {/* Prices */}
                       <div className="pt-2 grid grid-cols-2 gap-3 text-sm">
                         <div className="bg-muted/50 rounded-md p-3">

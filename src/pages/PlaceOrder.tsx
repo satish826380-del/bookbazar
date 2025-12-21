@@ -18,7 +18,7 @@ const DELIVERY_CHARGE = 50;
 const PlaceOrder = () => {
   const { bookId } = useParams<{ bookId: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const { getBookById, updateBookStatus } = useBooks();
   const { createOrder } = useOrders();
   const { toast } = useToast();
@@ -28,6 +28,8 @@ const PlaceOrder = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const book = bookId ? getBookById(bookId) : null;
+
+  if (isLoading) return null;
 
   if (!user || user.role !== 'buyer') {
     navigate('/auth');
@@ -60,7 +62,7 @@ const PlaceOrder = () => {
     setIsSubmitting(true);
 
     try {
-      createOrder({
+      await createOrder({
         bookId: book.id,
         bookTitle: book.title,
         bookImage: book.imageUrl,
@@ -74,7 +76,7 @@ const PlaceOrder = () => {
         deliveryCharge: DELIVERY_CHARGE,
       });
 
-      updateBookStatus(book.id, 'sold');
+      await updateBookStatus(book.id, 'sold');
 
       toast({ title: 'Order placed successfully!' });
       navigate('/buyer');

@@ -23,6 +23,7 @@ export interface Book {
   condition: BookCondition;
   imageUrl: string;
   pickupAddress: string;
+  landmark?: string;
   phone: string;
   status: BookStatus;
   createdAt: string;

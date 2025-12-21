@@ -14,13 +14,7 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  useEffect(() => {
-    if (!user || user.role !== 'admin') {
-      navigate('/');
-    }
-  }, [user, navigate]);
-
-  if (!user || user.role !== 'admin') return null;
+  if (!user) return null;
 
   const handleLogout = () => {
     logout();
@@ -35,7 +29,7 @@ const AdminLayout = () => {
           <h1 className="font-display text-xl font-bold text-foreground">Admin Panel</h1>
           <p className="text-sm text-muted-foreground">BookBazaar</p>
         </div>
-        
+
         <nav className="flex-1 p-4 space-y-1">
           {navItems.map(({ to, label, icon: Icon, end }) => (
             <NavLink
@@ -43,10 +37,9 @@ const AdminLayout = () => {
               to={to}
               end={end}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                `flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`
               }
             >
@@ -88,10 +81,9 @@ const AdminLayout = () => {
               to={to}
               end={end}
               className={({ isActive }) =>
-                `flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-                  isActive
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground'
+                `flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${isActive
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground'
                 }`
               }
             >

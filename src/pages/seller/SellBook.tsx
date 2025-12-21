@@ -14,7 +14,7 @@ import { ArrowLeft, Upload, X, IndianRupee } from 'lucide-react';
 
 const SellBook = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const { addBook } = useBooks();
   const { toast } = useToast();
 
@@ -22,6 +22,8 @@ const SellBook = () => {
   const [printedMRP, setPrintedMRP] = useState('');
   const [condition, setCondition] = useState<BookCondition | ''>('');
   const [images, setImages] = useState<string[]>([]);
+  const [address, setAddress] = useState('');
+  const [landmark, setLandmark] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Calculate suggested price based on condition and MRP
@@ -29,7 +31,7 @@ const SellBook = () => {
     if (!printedMRP || !condition) return 0;
     const mrp = parseFloat(printedMRP);
     if (isNaN(mrp)) return 0;
-    
+
     const discountRates: Record<BookCondition, number> = {
       'new': 0.70,
       'like-new': 0.60,
@@ -37,18 +39,19 @@ const SellBook = () => {
       'fair': 0.40,
       'poor': 0.30,
     };
-    
+
     return Math.round(mrp * discountRates[condition]);
   };
 
   const suggestedPrice = getSuggestedPrice();
 
   useEffect(() => {
-    if (!user || user.role !== 'seller') {
+    if (!isLoading && (!user || user.role !== 'seller')) {
       navigate('/auth');
     }
-  }, [user, navigate]);
+  }, [user, isLoading, navigate]);
 
+  if (isLoading) return null;
   if (!user || user.role !== 'seller') return null;
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,7 +83,7 @@ const SellBook = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !printedMRP || !condition) {
+    if (!title || !printedMRP || !condition || !address) {
       toast({ title: 'Please fill all required fields', variant: 'destructive' });
       return;
     }
@@ -90,10 +93,18 @@ const SellBook = () => {
       return;
     }
 
+    console.log('handleSubmit: Starting submission...');
+    console.log('handleSubmit: User state:', {
+      id: user?.id,
+      name: user?.name,
+      role: user?.role,
+      phone: user?.phone
+    });
+
     setIsSubmitting(true);
 
     try {
-      addBook({
+      const bookData = {
         sellerId: user.id,
         sellerName: user.name,
         title,
@@ -102,17 +113,31 @@ const SellBook = () => {
         price: suggestedPrice,
         condition,
         imageUrl: images[0],
-        pickupAddress: '',
+        pickupAddress: address,
+        landmark: landmark,
         phone: user.phone || '',
-      });
+      };
 
-      toast({ 
+      console.log('handleSubmit: Submitting book data:', bookData);
+
+      await addBook(bookData);
+
+      toast({
         title: 'Book listed successfully!',
         description: 'Your book is pending admin approval.'
       });
       navigate('/seller');
-    } catch (error) {
-      toast({ title: 'Failed to list book', variant: 'destructive' });
+    } catch (error: any) {
+      console.error('handleSubmit: Error occurred:', error);
+      console.error('handleSubmit: Error message:', error?.message);
+      console.error('handleSubmit: Error code:', error?.code);
+
+      const errorMessage = error?.message || 'Unknown error occurred';
+      toast({
+        title: 'Failed to list book',
+        description: errorMessage,
+        variant: 'destructive'
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -121,9 +146,9 @@ const SellBook = () => {
   return (
     <Layout>
       <div className="container max-w-lg py-8 px-4">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate('/seller')} 
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/seller')}
           className="mb-6 gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -216,6 +241,31 @@ const SellBook = () => {
                 </div>
               </div>
 
+              {/* Pickup Address */}
+              <div className="space-y-2">
+                <Label htmlFor="address">Pickup Address *</Label>
+                <Input
+                  id="address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Enter full address for pickup"
+                  className="h-12"
+                  required
+                />
+              </div>
+
+              {/* Landmark */}
+              <div className="space-y-2">
+                <Label htmlFor="landmark">Landmark (Optional)</Label>
+                <Input
+                  id="landmark"
+                  value={landmark}
+                  onChange={(e) => setLandmark(e.target.value)}
+                  placeholder="e.g. Near Big Bazaar"
+                  className="h-12"
+                />
+              </div>
+
               {/* Auto Suggested Price */}
               <div className="space-y-2">
                 <Label>Suggested Price</Label>
@@ -231,10 +281,10 @@ const SellBook = () => {
                 </p>
               </div>
 
-              <Button 
-                type="submit" 
-                size="lg" 
-                className="w-full h-12 text-base font-semibold" 
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full h-12 text-base font-semibold"
                 disabled={isSubmitting || suggestedPrice === 0}
               >
                 {isSubmitting ? 'Submitting...' : 'Submit for Approval'}

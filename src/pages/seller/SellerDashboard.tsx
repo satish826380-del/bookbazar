@@ -13,16 +13,17 @@ import { useEffect } from 'react';
 
 const SellerDashboard = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const { getBooksBySeller } = useBooks();
   const { getOrdersBySeller } = useOrders();
 
   useEffect(() => {
-    if (!user || user.role !== 'seller') {
+    if (!isLoading && (!user || user.role !== 'seller')) {
       navigate('/auth');
     }
-  }, [user, navigate]);
+  }, [user, isLoading, navigate]);
 
+  if (isLoading) return null;
   if (!user || user.role !== 'seller') return null;
 
   const myBooks = getBooksBySeller(user.id);

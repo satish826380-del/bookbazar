@@ -10,15 +10,16 @@ import { useEffect } from 'react';
 
 const BuyerDashboard = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const { getOrdersByBuyer } = useOrders();
 
   useEffect(() => {
-    if (!user || user.role !== 'buyer') {
+    if (!isLoading && (!user || user.role !== 'buyer')) {
       navigate('/auth');
     }
-  }, [user, navigate]);
+  }, [user, isLoading, navigate]);
 
+  if (isLoading) return null;
   if (!user || user.role !== 'buyer') return null;
 
   const myOrders = getOrdersByBuyer(user.id);
