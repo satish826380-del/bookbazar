@@ -21,7 +21,7 @@ const Home = () => {
 
   const filteredBooks = useMemo(() => {
     return approvedBooks.filter(book => {
-      const matchesSearch = 
+      const matchesSearch =
         book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         book.author.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = selectedCategory === 'all' || book.category === selectedCategory;
@@ -33,33 +33,33 @@ const Home = () => {
     <Layout>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-secondary/50 to-background">
-        <div className="container py-16 md:py-24">
+        <div className="container py-12 md:py-24">
           <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
-            <Badge variant="secondary" className="mb-4 text-sm font-medium px-4 py-1.5">
+            <Badge variant="secondary" className="mb-4 text-xs md:text-sm font-medium px-3 md:px-4 py-1 md:py-1.5">
               <BookOpen className="h-3.5 w-3.5 mr-1.5" />
               India's Trusted Book Marketplace
             </Badge>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 md:mb-6 leading-[1.1] md:leading-tight">
               Buy & Sell Old Books{' '}
-              <span className="text-primary">Easily</span>
+              <span className="text-primary italic">Easily</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto px-4">
               Cash on Delivery • Trusted Delivery • Save Money
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="font-medium text-base px-8 h-12" asChild>
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4">
+              <Button size="lg" className="font-medium text-base px-8 h-12 w-full sm:w-auto" asChild>
                 <a href="#books">
                   Browse Books
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
-              <Button size="lg" variant="outline" className="font-medium text-base px-8 h-12" asChild>
+              <Button size="lg" variant="outline" className="font-medium text-base px-8 h-12 w-full sm:w-auto shadow-sm" asChild>
                 <Link to={user?.role === 'seller' ? '/seller/sell' : '/auth'}>Sell Your Book</Link>
               </Button>
             </div>
           </div>
         </div>
-        
+
         {/* Decorative elements */}
         <div className="absolute top-20 left-10 w-20 h-20 bg-primary/5 rounded-full blur-2xl" />
         <div className="absolute bottom-10 right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl" />
@@ -89,7 +89,7 @@ const Home = () => {
                 description: 'Buyer pays cash when book is delivered. Simple and secure.',
               },
             ].map((step, index) => (
-              <div 
+              <div
                 key={index}
                 className="text-center p-6 rounded-xl bg-background border border-border/50 shadow-card animate-fade-in"
                 style={{ animationDelay: `${index * 100}ms` }}
@@ -156,7 +156,7 @@ const Home = () => {
             </div>
             <h3 className="font-display text-xl font-semibold mb-2 text-foreground">No Books Found</h3>
             <p className="text-muted-foreground mb-6">
-              {searchQuery || selectedCategory !== 'all' 
+              {searchQuery || selectedCategory !== 'all'
                 ? 'Try adjusting your search or filters'
                 : 'Be the first to list a book!'}
             </p>

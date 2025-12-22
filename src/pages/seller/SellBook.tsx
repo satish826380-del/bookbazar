@@ -63,7 +63,18 @@ const SellBook = () => {
       return;
     }
 
+    const MAX_FILE_SIZE = 500 * 1024; // 500KB
+
     Array.from(files).forEach(file => {
+      if (file.size > MAX_FILE_SIZE) {
+        toast({
+          title: 'File too large',
+          description: `${file.name} is larger than 500KB. Please compress it or use a smaller image.`,
+          variant: 'destructive'
+        });
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {

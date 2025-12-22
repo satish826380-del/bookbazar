@@ -102,40 +102,50 @@ export const Header = () => {
       </div>
 
       {/* Mobile Navigation */}
-      {mobileMenuOpen && (
-        <nav className="md:hidden bg-card border-b border-border p-4 space-y-2 animate-slide-up">
+      <div
+        className={`md:hidden absolute top-16 left-0 right-0 bg-background border-b border-border transition-all duration-300 ease-in-out overflow-hidden ${mobileMenuOpen ? 'max-h-[400px] opacity-100 shadow-lg' : 'max-h-0 opacity-0'
+          }`}
+      >
+        <nav className="p-4 space-y-2">
           <Link to="/" onClick={() => setMobileMenuOpen(false)}>
-            <Button variant="ghost" className="w-full justify-start">Home</Button>
+            <Button variant="ghost" className="w-full justify-start h-11">Home</Button>
           </Link>
           <Link to="/" onClick={() => setMobileMenuOpen(false)}>
-            <Button variant="ghost" className="w-full justify-start">Browse Books</Button>
+            <Button variant="ghost" className="w-full justify-start h-11">Browse Books</Button>
           </Link>
           <Link to={user?.role === 'seller' ? '/seller/sell' : '/auth'} onClick={() => setMobileMenuOpen(false)}>
-            <Button variant="ghost" className="w-full justify-start">Sell Books</Button>
+            <Button variant="ghost" className="w-full justify-start h-11">Sell Books</Button>
           </Link>
-          <div className="pt-2 border-t border-border">
+
+          <div className="pt-2 mt-2 border-t border-border">
             {user ? (
-              <>
+              <div className="space-y-2">
+                <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Account: {user.name}
+                </div>
                 <Link to={getDashboardLink()} onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start">Dashboard</Button>
+                  <Button variant="ghost" className="w-full justify-start h-11">
+                    <User className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </Button>
                 </Link>
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start text-destructive hover:text-destructive"
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-11 text-destructive hover:text-destructive hover:bg-destructive/10"
                   onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   Logout
                 </Button>
-              </>
+              </div>
             ) : (
               <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full">Login</Button>
+                <Button className="w-full h-11">Login / Sign Up</Button>
               </Link>
             )}
           </div>
         </nav>
-      )}
+      </div>
     </header>
   );
 };

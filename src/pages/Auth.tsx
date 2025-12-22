@@ -29,8 +29,8 @@ const Auth = () => {
 
   useEffect(() => {
     if (user) {
-      const redirect = user.role === 'admin' ? '/admin' : 
-                       user.role === 'seller' ? '/seller' : '/';
+      const redirect = user.role === 'admin' ? '/admin' :
+        user.role === 'seller' ? '/seller' : '/';
       navigate(redirect);
     }
   }, [user, navigate]);
@@ -47,11 +47,11 @@ const Auth = () => {
         if (!result.success) {
           const errorMsg = result.error || 'Unknown error occurred';
           console.error('Login failed:', errorMsg);
-          toast({ 
-            title: 'Login failed', 
-            description: errorMsg, 
+          toast({
+            title: 'Login failed',
+            description: errorMsg,
             variant: 'destructive',
-            duration: 5000 
+            duration: 5000
           });
         } else {
           console.log('Login successful, waiting for redirect...');
@@ -70,11 +70,11 @@ const Auth = () => {
         if (!result.success) {
           const errorMsg = result.error || 'Unknown error occurred';
           console.error('Signup failed:', errorMsg);
-          toast({ 
-            title: 'Signup failed', 
-            description: errorMsg, 
+          toast({
+            title: 'Signup failed',
+            description: errorMsg,
             variant: 'destructive',
-            duration: 5000 
+            duration: 5000
           });
         } else {
           console.log('Signup successful, waiting for redirect...');
@@ -85,11 +85,11 @@ const Auth = () => {
       }
     } catch (err) {
       console.error('Unexpected error in handleSubmit:', err);
-      toast({ 
-        title: 'An error occurred', 
+      toast({
+        title: 'An error occurred',
         description: err instanceof Error ? err.message : 'Please check the console for details',
         variant: 'destructive',
-        duration: 5000 
+        duration: 5000
       });
     } finally {
       setIsSubmitting(false);
@@ -120,11 +120,10 @@ const Auth = () => {
                     <RadioGroup value={role} onValueChange={(v) => setRole(v as UserRole)} className="grid grid-cols-2 gap-3">
                       <Label
                         htmlFor="buyer"
-                        className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                          role === 'buyer' 
-                            ? 'border-primary bg-primary/5' 
+                        className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all ${role === 'buyer'
+                            ? 'border-primary bg-primary/5'
                             : 'border-border hover:border-primary/50'
-                        }`}
+                          }`}
                       >
                         <RadioGroupItem value="buyer" id="buyer" className="sr-only" />
                         <ShoppingCart className={`h-6 w-6 ${role === 'buyer' ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -134,11 +133,10 @@ const Auth = () => {
                       </Label>
                       <Label
                         htmlFor="seller"
-                        className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                          role === 'seller' 
-                            ? 'border-primary bg-primary/5' 
+                        className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all ${role === 'seller'
+                            ? 'border-primary bg-primary/5'
                             : 'border-border hover:border-primary/50'
-                        }`}
+                          }`}
                       >
                         <RadioGroupItem value="seller" id="seller" className="sr-only" />
                         <Store className={`h-6 w-6 ${role === 'seller' ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -225,15 +223,6 @@ const Auth = () => {
                 <span className="font-medium text-primary">{isLogin ? 'Sign up' : 'Sign in'}</span>
               </button>
             </div>
-
-            {isLogin && (
-              <div className="mt-4 p-4 rounded-xl bg-secondary/50 border border-border">
-                <p className="text-xs text-muted-foreground text-center mb-2">Demo Admin Access</p>
-                <p className="text-xs text-center font-mono text-foreground">
-                  admin@bookstore.com / admin123
-                </p>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>
