@@ -23,6 +23,7 @@ import AdminHome from "./pages/admin/AdminHome";
 import AdminBooks from "./pages/admin/AdminBooks";
 import AdminOrders from "./pages/admin/AdminOrders";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { WhatsAppHelp } from "./components/ui/WhatsAppHelp";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,7 @@ const AppContent = () => {
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <WhatsAppHelp />
         </BrowserRouter>
       </div>
     </>

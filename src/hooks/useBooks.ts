@@ -16,6 +16,8 @@ type BookRow = {
   landmark: string;
   phone: string;
   status: BookStatus;
+  latitude: number;
+  longitude: number;
   created_at: string;
 };
 
@@ -33,6 +35,8 @@ const mapBook = (row: BookRow): Book => ({
   landmark: row.landmark,
   phone: row.phone,
   status: row.status,
+  latitude: row.latitude,
+  longitude: row.longitude,
   createdAt: row.created_at,
 });
 
@@ -85,6 +89,8 @@ export const useBooks = () => {
         landmark: book.landmark || '',
         phone: book.phone,
         status: 'pending',
+        latitude: book.latitude,
+        longitude: book.longitude,
       })
       .select('*')
       .single();

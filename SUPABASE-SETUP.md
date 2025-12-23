@@ -86,6 +86,16 @@ VITE_SUPABASE_ANON_KEY=your_anon_key_here
 
 ---
 
+### Step 7: Set Up Live Location Sharing (New!)
+
+1. In your Supabase dashboard, go to **SQL Editor**
+2. Open the `location-setup.sql` file from this project
+3. **Copy and paste** the code into a new query
+4. Click **"Run"**
+5. This will create the `order_locations` table and enable Realtime updates.
+
+---
+
 ## 🗂️ Database Schema Overview
 
 ### **profiles** table

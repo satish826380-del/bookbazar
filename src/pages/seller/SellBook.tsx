@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { BOOK_CONDITIONS, BookCondition } from '@/types';
-import { ArrowLeft, Upload, X, IndianRupee } from 'lucide-react';
+import { ArrowLeft, Upload, X, IndianRupee, MapPin } from 'lucide-react';
 
 const SellBook = () => {
   const navigate = useNavigate();
@@ -252,29 +252,30 @@ const SellBook = () => {
                 </div>
               </div>
 
-              {/* Pickup Address */}
-              <div className="space-y-2">
-                <Label htmlFor="address">Pickup Address *</Label>
-                <Input
-                  id="address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Enter full address for pickup"
-                  className="h-12"
-                  required
-                />
-              </div>
+              {/* Pickup Address Input */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="address">Pickup Address *</Label>
+                  <Input
+                    id="address"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Enter full address for pickup"
+                    className="h-12"
+                    required
+                  />
+                </div>
 
-              {/* Landmark */}
-              <div className="space-y-2">
-                <Label htmlFor="landmark">Landmark (Optional)</Label>
-                <Input
-                  id="landmark"
-                  value={landmark}
-                  onChange={(e) => setLandmark(e.target.value)}
-                  placeholder="e.g. Near Big Bazaar"
-                  className="h-12"
-                />
+                <div className="space-y-2">
+                  <Label htmlFor="landmark">Landmark (Optional)</Label>
+                  <Input
+                    id="landmark"
+                    value={landmark}
+                    onChange={(e) => setLandmark(e.target.value)}
+                    placeholder="e.g. Near Big Bazaar"
+                    className="h-12"
+                  />
+                </div>
               </div>
 
               {/* Auto Suggested Price */}

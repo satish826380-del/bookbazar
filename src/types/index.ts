@@ -26,6 +26,8 @@ export interface Book {
   landmark?: string;
   phone: string;
   status: BookStatus;
+  latitude?: number;
+  longitude?: number;
   createdAt: string;
 }
 
@@ -56,6 +58,16 @@ export interface Payout {
   adminCommission: number;
   paid: boolean;
   paidAt?: string;
+}
+
+export interface OrderLocation {
+  id: string;
+  orderId: string;
+  userId: string;
+  userRole: 'buyer' | 'seller';
+  latitude: number;
+  longitude: number;
+  updatedAt: string;
 }
 
 export const BOOK_CATEGORIES = [

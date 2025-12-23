@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { BookPlus, Package, DollarSign, Clock } from 'lucide-react';
 import { useEffect } from 'react';
+import { ShareLocationControl } from '@/components/orders/ShareLocationControl';
 
 const SellerDashboard = () => {
   const navigate = useNavigate();
@@ -100,9 +101,9 @@ const SellerDashboard = () => {
           </TabsList>
 
           <TabsContent value="books" className="mt-6">
-            <BookGrid 
-              books={myBooks} 
-              showStatus 
+            <BookGrid
+              books={myBooks}
+              showStatus
               emptyMessage="You haven't listed any books yet."
             />
           </TabsContent>
@@ -134,6 +135,14 @@ const SellerDashboard = () => {
                             <StatusBadge status={order.status} />
                           </div>
                           <p className="text-primary font-semibold mt-2">₹{order.bookPrice}</p>
+
+                          {['approved', 'picked-up'].includes(order.status) && (
+                            <ShareLocationControl
+                              orderId={order.id}
+                              userId={user.id}
+                              userRole="seller"
+                            />
+                          )}
                         </div>
                       </div>
                     </CardContent>

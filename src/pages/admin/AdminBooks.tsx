@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { BookStatus, BookCondition } from '@/types';
-import { Check, X, IndianRupee } from 'lucide-react';
+import { Check, X, IndianRupee, MapPin } from 'lucide-react';
 
 const SELLER_PAYOUT_RATE = 0.6; // 60%
 const ADMIN_MARGIN_RATE = 0.4; // 40%
@@ -115,6 +115,17 @@ const AdminBooks = () => {
                         <div className="text-sm">
                           <span className="text-muted-foreground">Pickup Address:</span>{' '}
                           <span className="font-medium">{book.pickupAddress}</span>
+                          {book.latitude && book.longitude && (
+                            <a
+                              href={`https://www.google.com/maps?q=${book.latitude},${book.longitude}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="ml-2 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                            >
+                              <MapPin className="h-3 w-3" />
+                              View on Map
+                            </a>
+                          )}
                         </div>
                         {book.landmark && (
                           <div className="text-sm">
