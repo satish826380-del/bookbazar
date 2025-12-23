@@ -10,8 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { BookPlus, Package, DollarSign, Clock } from 'lucide-react';
 import { useEffect } from 'react';
-import { ShareLocationControl } from '@/components/orders/ShareLocationControl';
-
 const SellerDashboard = () => {
   const navigate = useNavigate();
   const { user, isLoading } = useAuth();
@@ -136,13 +134,6 @@ const SellerDashboard = () => {
                           </div>
                           <p className="text-primary font-semibold mt-2">₹{order.bookPrice}</p>
 
-                          {['approved', 'picked-up'].includes(order.status) && (
-                            <ShareLocationControl
-                              orderId={order.id}
-                              userId={user.id}
-                              userRole="seller"
-                            />
-                          )}
                         </div>
                       </div>
                     </CardContent>

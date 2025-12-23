@@ -7,8 +7,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { ShoppingCart, Package, Truck, MapPin, Phone } from 'lucide-react';
 import { useEffect } from 'react';
-import { ShareLocationControl } from '@/components/orders/ShareLocationControl';
-
 const BuyerDashboard = () => {
   const navigate = useNavigate();
   const { user, isLoading } = useAuth();
@@ -123,13 +121,6 @@ const BuyerDashboard = () => {
                         </p>
                       </div>
 
-                      {['approved', 'picked-up'].includes(order.status) && (
-                        <ShareLocationControl
-                          orderId={order.id}
-                          userId={user.id}
-                          userRole="buyer"
-                        />
-                      )}
                     </div>
                   </div>
                 </CardContent>
