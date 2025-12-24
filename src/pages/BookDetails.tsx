@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, ShoppingCart, User, MapPin, CreditCard, Truck, Shield, BookOpen } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, User, MapPin, CreditCard, Truck, Shield, BookOpen, Lock } from 'lucide-react';
 
 const conditionConfig = {
   'new': { label: 'New', className: 'bg-success/10 text-success border-success/20' },
@@ -41,9 +41,9 @@ const BookDetails = () => {
   return (
     <Layout>
       <div className="container py-8">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate(-1)} 
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
           className="mb-6 gap-2 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -90,18 +90,34 @@ const BookDetails = () => {
               </CardContent>
             </Card>
 
-            {/* COD Badge */}
-            <Card className="bg-success/5 border-success/20">
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center">
-                  <CreditCard className="h-5 w-5 text-success" />
-                </div>
-                <div>
-                  <p className="font-medium text-foreground">Cash on Delivery Available</p>
-                  <p className="text-sm text-muted-foreground">Pay when you receive your book</p>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Main Action Section */}
+            <div className="pt-2">
+              {user?.role === 'buyer' ? (
+                <Button size="lg" className="w-full h-14 text-lg font-medium" asChild>
+                  <Link to={`/order/${book.id}`}>
+                    <ShoppingCart className="mr-2 h-5 w-5" />
+                    Order This Book
+                  </Link>
+                </Button>
+              ) : user ? (
+                <Card className="bg-muted/50 border-border/50">
+                  <CardContent className="p-4 text-center">
+                    <p className="text-muted-foreground text-sm font-medium">
+                      {user.role === 'seller'
+                        ? 'You are logged in as a Seller. Please use a Buyer account to place orders.'
+                        : 'Admin accounts cannot place orders.'}
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Button size="lg" className="w-full h-14 text-lg font-medium bg-primary hover:bg-primary/90" asChild>
+                  <Link to="/auth?mode=signup&role=buyer">
+                    <Lock className="mr-2 h-5 w-5" />
+                    Login to Order
+                  </Link>
+                </Button>
+              )}
+            </div>
 
             {/* Features */}
             <div className="grid grid-cols-2 gap-4">
@@ -121,30 +137,8 @@ const BookDetails = () => {
               </div>
             </div>
 
-            {/* Action Buttons */}
-            {user?.role === 'buyer' ? (
-              <Button size="lg" className="w-full h-14 text-lg font-medium" asChild>
-                <Link to={`/order/${book.id}`}>
-                  <BookOpen className="mr-2 h-5 w-5" />
-                  Order This Book
-                </Link>
-              </Button>
-            ) : user ? (
-              <p className="text-center text-muted-foreground py-4">
-                {user.role === 'seller' 
-                  ? 'Switch to a buyer account to order books'
-                  : 'Admin accounts cannot place orders'}
-              </p>
-            ) : (
-              <Button size="lg" className="w-full h-14 text-lg font-medium" asChild>
-                <Link to="/auth?mode=signup&role=buyer">
-                  Login to Order
-                </Link>
-              </Button>
-            )}
-
-            <p className="text-sm text-center text-muted-foreground">
-              You will pay ₹{book.price} + delivery charges on delivery
+            <p className="text-sm text-center text-muted-foreground pb-4">
+              Cash on Delivery (COD) Available • Pay only when you receive your book
             </p>
           </div>
         </div>
