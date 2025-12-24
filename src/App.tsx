@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 // Pages
 import Home from "./pages/Home";
@@ -29,23 +27,14 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   const { isLoading: authLoading } = useAuth();
-  const [initialLoad, setInitialLoad] = useState(true);
 
-  useEffect(() => {
-    // Show loader for a snappier feel (1 second)
-    const timer = setTimeout(() => {
-      setInitialLoad(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const showLoader = authLoading || initialLoad;
+  if (authLoading) {
+    return null;
+  }
 
   return (
     <>
-      {showLoader && <LoadingScreen />}
-      <div className={`transition-opacity duration-500 ${showLoader ? 'opacity-0' : 'opacity-100'}`}>
+      <div>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />

@@ -33,7 +33,7 @@ const Home = () => {
     <Layout>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-secondary/50 to-background">
-        <div className="container py-12 md:py-24">
+        <div className="container py-12 md:py-24 relative z-10">
           <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
             <Badge variant="secondary" className="mb-4 text-xs md:text-sm font-medium px-3 md:px-4 py-1 md:py-1.5">
               <BookOpen className="h-3.5 w-3.5 mr-1.5" />
@@ -61,8 +61,8 @@ const Home = () => {
         </div>
 
         {/* Decorative elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-primary/5 rounded-full blur-2xl" />
-        <div className="absolute bottom-10 right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute top-20 left-10 w-20 h-20 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
       </section>
 
       {/* How It Works */}
