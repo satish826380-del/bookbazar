@@ -26,12 +26,8 @@ import { WhatsAppHelp } from "./components/ui/WhatsAppHelp";
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { isLoading: authLoading } = useAuth();
-
-  if (authLoading) {
-    return null;
-  }
-
+  // We no longer block the entire app on authLoading.
+  // This makes the homepage feel instant.
   return (
     <>
       <div>

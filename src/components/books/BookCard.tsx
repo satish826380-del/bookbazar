@@ -35,10 +35,11 @@ export const BookCard = ({ book, showStatus = false }: BookCardProps) => {
           src={book.imageUrl || '/placeholder.svg'}
           alt={book.title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
         />
         {showStatus && (
-          <Badge 
-            variant="outline" 
+          <Badge
+            variant="outline"
             className={`absolute top-3 right-3 ${status.className} backdrop-blur-sm`}
           >
             {status.label}
@@ -52,18 +53,18 @@ export const BookCard = ({ book, showStatus = false }: BookCardProps) => {
           </h3>
           <p className="text-muted-foreground text-sm">by {book.author}</p>
         </div>
-        
+
         <div className="flex items-center justify-between">
           <span className="font-semibold text-xl text-primary">₹{book.price}</span>
           <Badge variant="outline" className={condition.className}>
             {condition.label}
           </Badge>
         </div>
-        
+
         <Badge variant="secondary" className="text-xs font-medium">
           {book.category}
         </Badge>
-        
+
         {book.status === 'approved' && (
           <Button asChild className="w-full mt-2 font-medium">
             <Link to={`/book/${book.id}`}>View Book</Link>
