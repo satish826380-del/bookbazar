@@ -22,6 +22,7 @@ import AdminBooks from "./pages/admin/AdminBooks";
 import AdminOrders from "./pages/admin/AdminOrders";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { WhatsAppHelp } from "./components/ui/WhatsAppHelp";
+import { ScrollToTop } from "./components/layout/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const AppContent = () => {
     <>
       <div>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
